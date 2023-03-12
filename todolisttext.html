@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>::This is todolist::</title>
+    <link rel="stylesheet" href="css/reset.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+        integrity="sha512-SzlrxWUlpfuzQ+pcUCosxcglQRNAq/DZjVsC0lE40xsADsfeQoEypE+enwcOiGjk/bSuGGKHEyjSoQ1zVisanQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dongle:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        .textWrap {
+            width: 500px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 10px;
+            border: 2px solid #333;
+            background: linear-gradient(96.04deg, #00EF60 16.02%, rgba(0, 209, 255, 0) 107.07%);
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .textWrap h3::after {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%);
+            width: 100px;
+            height: 2px;
+            border-radius: 2px;
+            background: linear-gradient(264.57deg, #1E56E4 -8.61%, rgba(0, 214, 175, 0.0750201) 120.19%);
+        }
+
+        .textWrap h3 {
+            margin-bottom: 5px;
+            font-size: 36px;
+        }
+
+        .textWrap p {
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+
+        .bWrap{
+            width: 500px;
+            height: 350px;
+            margin: 0 auto;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 20px;
+        
+        }
+        .inpWrap,
+        .listView {
+            width: 300px;
+            margin: 0 auto;
+        }
+
+        .listView {
+            background: none;
+        }
+
+        .listView ul li {
+            display: flex;
+            padding: 5px 0;
+        }
+
+        .listView ul li .list {
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+        }
+
+        .listView ul li .icon {
+            margin-left: auto;
+            background: #333;
+            padding: 3px 9px;
+            border-radius: 5px;
+            font-size: 11px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .listView ul li .icon a {
+            color: white
+        }
+
+        .btn_mo {
+            display: none;
+        }
+
+        .item.done {
+            background: linear-gradient(180deg, #F890E7 0%, rgba(255, 0, 15, 0) 100%);
+;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="textWrap">
+        <h3>TO-DO-LIST</h3>
+        <p>Made by HO JUN SONG</p>
+    </div>
+    <div class="bWrap" style="background-image: url(img/backgroundimg.jpg); background-position: center;">
+        <div class="inpWrap" style="background-color: aquamarine; border-radius: 3px;">
+            <input type="hidden" class="jun">
+            <input type="text" class="inp" placeholder="What will you do toady?" style="width:200px">
+            <button class="btn_inp">입력버튼</button>
+            <button class="btn_mo">수정버튼</button>
+        </div>
+        <div class="listView">
+            <ul></ul>
+            <button class="btnAllDel" onclick="allDel()">전체삭제</button>
+        </div>
+    </div>
+
+    <script>
+        // 배열값
+        let listData = [];
+
+        const inpElem = document.querySelector(".inp");
+        const btnIpElem = document.querySelector(".btn_inp");
+        const junElem = document.querySelector(".jun");
+        const btnMElem = document.querySelector(".btn_mo");
+        const listElem = document.querySelector(".listView ul");
+
+        // 입력 
+        btnIpElem.addEventListener("click", function(){
+            let value = { todo: inpElem.value, done: false }
+
+            if (inpElem.value != ""){
+                listData.push(value);
+                let valueData = JSON.stringify(listData)
+                localStorage.setItem("todoData", valueData)
+                viewData();
+                inpElem.value = ""
+
+            } else {
+                alert("오늘의 할일을 입력하세요");
+                inpElem.focus()
+            }
+        })
+
+        // 수정 
+        btnMElem.addEventListener("click", function(){
+            listData[junElem.value].todo = inpElem.value;
+            listData[junElem.value].done = false;
+
+            inpElem.value = ""
+            btnIpElem.style.display = "inline-block";
+            btnMElem.style.display = "none";
+
+            let valueData = JSON.stringify(listData)
+            localStorage.setItem("todoData", valueData)
+            viewData()
+        })
+
+        function viewData(){
+            if (localStorage.length > 0) {
+                let localData = localStorage.getItem("todoData");
+                listData = JSON.parse(localData)
+            }
+
+            let viewList = "";
+
+            listData.forEach(function (item, index) {
+                if (item.done == true) {
+                    viewList += `<li class="item done">${listData[index].todo}`
+                }else {
+                    viewList += `<li class="item">${item.todo}`
+                }
+                viewList += `<div class="icon">
+                            <a href="javascript:void(0)" onclick="del(${index})"><i class="fa-solid fa-delete-left"></i></a>
+                            <a href="javascript:void(0)" onclick="modi('${item.todo}',${index})"><i class="fa-solid fa-wrench"></i></a>
+                            <a href="javascript:void(0)" onclick="done(${index})" class="han"><i class="fa-solid fa-circle-check"></i></a>
+                            </div></li>`
+            })
+            listElem.innerHTML = viewList;
+        }
+        viewData();
+
+
+        // 함수 삭제, 완료, 수정, 전체삭제
+
+        function del(index) {
+            listData.splice(index, 1)
+            let valueData = JSON.stringify(listData)
+            localStorage.setItem("todoData", valueData)
+
+            viewData()
+        }
+
+        function done(index){
+            listData[index].done = !listData[index].done;
+            let valueData = JSON.stringify(listData)
+            localStorage.setItem("todoData", valueData)
+            viewData()
+        }
+
+        function modi(todo, index){
+            inpElem.value = todo;
+            junElem.value = index;
+            btnIpElem.style.display = "none";
+            btnMElem.style.display = "inline-block";
+        }
+
+        function allDel(){
+            listData = [];
+            let valueData = JSON.stringify(listData)
+            localStorage.setItem("todoData", valueData)
+            viewData()
+        }
+    </script>
+</body>
+
+</html>
+
+
