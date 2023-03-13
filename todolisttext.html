@@ -136,14 +136,14 @@
         btnIpElem.addEventListener("click", function(){
             let value = { todo: inpElem.value, done: false }
 
-            if (inpElem.value != ""){
+            if(inpElem.value != ""){
                 listData.push(value);
                 let valueData = JSON.stringify(listData)
                 localStorage.setItem("todoData", valueData)
                 viewData();
                 inpElem.value = ""
 
-            } else {
+            }else {
                 alert("오늘의 할일을 입력하세요");
                 inpElem.focus()
             }
@@ -190,7 +190,7 @@
 
         // 함수 삭제, 완료, 수정, 전체삭제
 
-        function del(index) {
+        function del(index){
             listData.splice(index, 1)
             let valueData = JSON.stringify(listData)
             localStorage.setItem("todoData", valueData)
