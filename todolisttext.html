@@ -123,7 +123,7 @@
     </div>
 
     <script>
-        // 배열값
+        // 배열데이터
         let listData = [];
 
         const inpElem = document.querySelector(".inp");
@@ -160,9 +160,10 @@
 
             let valueData = JSON.stringify(listData)
             localStorage.setItem("todoData", valueData)
-            viewData()
+            viewData();
         })
 
+        //
         function viewData(){
             if (localStorage.length > 0) {
                 let localData = localStorage.getItem("todoData");
@@ -188,13 +189,20 @@
         viewData();
 
 
-        // 함수 삭제, 완료, 수정, 전체삭제
+        // 함수처리 : 삭제, 완료, 수정, 전체삭제
 
         function del(index){
             listData.splice(index, 1)
             let valueData = JSON.stringify(listData)
             localStorage.setItem("todoData", valueData)
 
+            viewData()
+        }
+
+        function allDel(){
+            listData = [];
+            let valueData = JSON.stringify(listData)
+            localStorage.setItem("todoData", valueData)
             viewData()
         }
 
@@ -212,12 +220,6 @@
             btnMElem.style.display = "inline-block";
         }
 
-        function allDel(){
-            listData = [];
-            let valueData = JSON.stringify(listData)
-            localStorage.setItem("todoData", valueData)
-            viewData()
-        }
     </script>
 </body>
 
